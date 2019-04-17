@@ -3,22 +3,16 @@ from mitmproxy import ctx
 import json
 from pony.orm import *
 from create_db import GifShowUser
+from create_links import Links
 import re
+import hashlib
+
 
 gender_re = re.compile(r'user-info-sex (female|male)')
 photo_re = re.compile(r'<li class="feed-list-item"')
 
-db = Database()
-db.bind(provider='sqlite', filename='database.sqlite', create_db=True)
-
 
 def request(flow: http.HTTPFlow):
-    # redirect to different host
-    # if flow.request.pretty_host == "live.kuaishou.com":
-    #     flow.request.host = "live.kuaishou.com"
-    # # answer from proxy
-    # elif flow.request.path.endswith("/graphql"):
-    #     ctx.log.info(flow.response)
     pass
 
 

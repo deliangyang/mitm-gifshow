@@ -1,9 +1,22 @@
 from selenium import webdriver
 import time
-from create_db import GifShowUser, Links
+from create_db import GifShowUser
+from create_links import Links
 from pony.orm import *
 import random
+import platform
 import hashlib
+
+
+@db_session
+def update_urls_state(md5):
+    try:
+        lk = Links.get(md5=md5)
+        lk.state = 1
+        commit()
+    except Exception as e:
+        print(e)
+        pass
 
 
 @db_session
@@ -19,19 +32,6 @@ def update_urls(url):
         pass
 
 
-@db_session
-def update_urls_state(md5):
-    try:
-        l = Links.get(md5=md5)
-        l.state = 1
-        commit()
-    except Exception as e:
-        print(e)
-        pass
-
-
-dr = webdriver.Chrome(executable_path="./chromedriver.exe")
-
 with open('urls.txt', 'r') as fw:
     for line in fw.readlines():
         update_urls(line)
@@ -43,7 +43,7 @@ def get_urls():
 
 
 @db_session
-def run():
+def run(dr):
     for url in get_urls():
         link, md5 = url
         print('current url:%s' % link)
@@ -62,8 +62,9 @@ def run():
             GifShowUser.id.asc
         )[:300]
         for user in users:
+            print('https://live.kuaishou.com/profile/' + user.username)
             dr.get('https://live.kuaishou.com/profile/' + user.username)
-            time.sleep(1)
+            time.sleep(random.randint(3, 10) / 10)
 
     while True:
         users = GifShowUser.select(
@@ -82,5 +83,14 @@ def run():
     dr.close()
 
 
+def get_chrome_driver():
+    os = platform.system()
+    if os != 'Darwin':
+        return './chromedriver.exe'
+    return './chromedriver'
+
+
 if __name__ == '__main__':
-    run()
+    driver = get_chrome_driver()
+    _dr = webdriver.Chrome(executable_path=driver)
+    run(_dr)
