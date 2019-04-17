@@ -12,7 +12,7 @@ with open('flag', 'r') as f:
 
 
 def get_urls():
-    with open('urls', 'r') as fw:
+    with open('urls.txt', 'r') as fw:
         for line in fw:
             yield line
 

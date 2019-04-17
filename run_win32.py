@@ -32,7 +32,7 @@ def update_urls_state(md5):
 
 dr = webdriver.Chrome(executable_path="./chromedriver.exe")
 
-with open('urls', 'r') as fw:
+with open('urls.txt', 'r') as fw:
     for line in fw.readlines():
         update_urls(line)
 
